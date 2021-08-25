@@ -82,7 +82,7 @@ public class DistanceCalculator {
         return rsl;
     }
 
-    //сопоставляем отрезок со станциями, и в результат пишем те пары индексов, между которыми этот отрезок
+    //сопоставляем расстояние со станциями, и в результат пишем те пары индексов, между которыми это расстояние
     public Set<Integer> sortStations(Map<Integer, List<Integer>> allStations, Map<Integer, Integer> distance) {
         Set<Integer> rsl = new HashSet<>();
         int pattern = distance.values()
@@ -117,7 +117,7 @@ public class DistanceCalculator {
             }
         }
         stations = stations.isEmpty() ? List.of(1) : stations;
-        return String.format("%s\n%s",
+        return String.format("%s" + System.lineSeparator() + "%s",
                 leftDistance.values().stream()
                         .findFirst()
                         .get(),

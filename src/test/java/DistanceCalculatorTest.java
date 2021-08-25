@@ -12,7 +12,7 @@ public class DistanceCalculatorTest {
         DistanceCalculator calculator = new DistanceCalculator();
         List<Integer> stations = new ArrayList<>(Arrays.asList(2, 10, 45, 33, 56));
         Map<Integer, List<Integer>> rsl = calculator.calculateDistance(stations);
-        assertThat(rsl.toString(), is ("{0=[8, 43, 31, 54], 1=[35, 23, 46], 2=[12, 11], 3=[23], 4=[0]}"));
+        assertEquals(rsl.toString(),"{0=[8, 43, 31, 54], 1=[35, 23, 46], 2=[12, 11], 3=[23], 4=[0]}");
     }
 
     @Test
@@ -30,7 +30,7 @@ public class DistanceCalculatorTest {
     public void findStations() {
         DistanceCalculator calculator = new DistanceCalculator();
         var distance = Map.of(2, 23);
-        Map<Integer, List<Integer>> allStations = Map.of(0, List.of(8, 43, 31, 54),1, List.of(35, 23, 46),
+        Map<Integer, List<Integer>> allStations = Map.of(0, List.of(8, 43, 31, 54), 1, List.of(35, 23, 46),
                 2, List.of(12, 11), 3, List.of(23));
         Set<Integer> leftStations = calculator.sortStations(allStations, distance);
         System.out.println(leftStations);
@@ -84,7 +84,7 @@ public class DistanceCalculatorTest {
     public void whenSortStations() {
         DistanceCalculator calculator = new DistanceCalculator();
         var distance = Map.of(2, 23);
-        Map<Integer, List<Integer>> allStations = Map.of(0, List.of(8, 43, 31, 54),1, List.of(35, 23, 46),
+        Map<Integer, List<Integer>> allStations = Map.of(0, List.of(8, 43, 31, 54), 1, List.of(35, 23, 46),
                 2, List.of(12, 11), 3, List.of(23));
         Set<Integer> leftStations = calculator.sortStations(allStations, distance);
         assertThat(leftStations, is(Set.of(1, 3, 4)));
@@ -94,6 +94,8 @@ public class DistanceCalculatorTest {
     public void whenInput5And3ThenReceipt() {
         DistanceCalculator calculator = new DistanceCalculator();
         String rsl = calculator.receipt(List.of(5, 3), List.of(12, 96, 6, 34, 73));
+        String expected = "90" + System.lineSeparator() + "[1, 4, 5]";
+        assertEquals(expected,rsl);
         System.out.println(rsl);
     }
 
@@ -101,13 +103,8 @@ public class DistanceCalculatorTest {
     public void whenInput6And3ThenReceipt() {
         DistanceCalculator calculator = new DistanceCalculator();
         String rsl = calculator.receipt(List.of(6, 3), List.of(12, 15, 66, 24, 120, 53));
-        System.out.println(rsl);
-    }
-
-    @Test
-    public void whenInput4And1ThenReceipt() {
-        DistanceCalculator calculator = new DistanceCalculator();
-        String rsl = calculator.receipt(List.of(4, 1), List.of(40, 80, 50, 60));
+        String expected = "54" + System.lineSeparator() + "[2, 4, 6]";
+        assertEquals(expected,rsl);
         System.out.println(rsl);
     }
 
@@ -115,6 +112,17 @@ public class DistanceCalculatorTest {
     public void whenInput4And2ThenReceipt() {
         DistanceCalculator calculator = new DistanceCalculator();
         String rsl = calculator.receipt(List.of(4, 2), List.of(40, 82, 8, 71));
+        String expected = "74" + System.lineSeparator() + "[1, 4]";
+        assertEquals(expected,rsl);
+        System.out.println(rsl);
+    }
+
+    @Test
+    public void whenInput4And1ThenReceipt() {
+        DistanceCalculator calculator = new DistanceCalculator();
+        String rsl = calculator.receipt(List.of(4, 1), List.of(40, 80, 50, 60));
+        String expected = "20" + System.lineSeparator() + "[3]";
+        assertEquals(expected,rsl);
         System.out.println(rsl);
     }
 
@@ -122,13 +130,9 @@ public class DistanceCalculatorTest {
     public void whenInput3And1ThenReceipt() {
         DistanceCalculator calculator = new DistanceCalculator();
         String rsl = calculator.receipt(List.of(3, 1), List.of(2, 2, 2));
+        String expected = "0" + System.lineSeparator() + "[1]";
         System.out.println(rsl);
-    }
-
-    @Test
-    public void whenInput5And2ThenReceipt() {
-        DistanceCalculator calculator = new DistanceCalculator();
-        String rsl = calculator.receipt(List.of(5, 2), List.of(2, 12, 8, 8, 22));
-        System.out.println(rsl);
+        System.out.println(expected);
+        assertEquals(expected,rsl);
     }
 }
