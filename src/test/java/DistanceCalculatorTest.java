@@ -12,39 +12,8 @@ public class DistanceCalculatorTest {
         DistanceCalculator calculator = new DistanceCalculator();
         List<Integer> stations = new ArrayList<>(Arrays.asList(2, 10, 45, 33, 56));
         Map<Integer, List<Integer>> rsl = calculator.calculateDistance(stations);
-        assertThat(rsl.toString(), is ("{0=[8, 43, 31, 54], 1=[35, 23, 46], 2=[12, 11], 3=[23]}"));
+        assertThat(rsl.toString(), is ("{0=[8, 43, 31, 54], 1=[35, 23, 46], 2=[12, 11], 3=[23], 4=[0]}"));
     }
-
-//    @Test
-//    public void when5StationsThen2Duplicates() {
-//        DistanceCalculator calculator = new DistanceCalculator();
-//        Map<Integer, List<Integer>> in = new HashMap<>();
-//        in.put(0, Arrays.asList(8, 43, 31, 54));
-//        in.put(1, Arrays.asList(35, 23, 46));
-//        in.put(2, Arrays.asList(12, 11));
-//        in.put(3, Arrays.asList(23));
-//        Map<Integer, Integer> rsl = calculator.calculateDuplicates(in);
-//        System.out.println(rsl);
-//        assertThat(rsl.get(35), is(1));
-//        assertThat(rsl.get(23), is(2));
-//    }
-
-//    @Test
-//    public void whenManyDuplicateThenLeftGreatest() {
-//        DistanceCalculator calculator = new DistanceCalculator();
-//        Map<Integer, Integer> in = new HashMap<>();
-//        in.put(35, 1);
-//        in.put(12, 1);
-//        in.put(30, 1);
-//        in.put(39, 1);
-//        in.put(23, 2);
-//        in.put(40, 2);
-//        in.put(64, 3);
-//        in.put(4, 3);
-//        Map<Integer, Integer> rsl = calculator.deleteSmallestDuplicate(in);
-//        System.out.println(rsl);
-//        assertThat(rsl, is(Map.of(1, 39, 2, 40, 3, 64)));
-//    }
 
     @Test
     public void when4StationLeft() {
