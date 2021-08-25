@@ -1,20 +1,10 @@
 import java.util.*;
-import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class DistanceCalculator {
 
     public static void main(String[] args) {
-        Random stationAmount = new Random(3);
-        Random coordinats = new Random();
-        Random toRemove = new Random();
-        List<Integer> stationList = coordinats.ints(0, (int) Math.pow(10, 9))
-                .limit(stationAmount.nextInt(100_000))
-                .boxed()
-                .collect(Collectors.toList());
-        System.out.println(stationList);
-        System.out.println(stationList.size());
+
     }
 
     //считаем расстояния между станциями
@@ -68,10 +58,7 @@ public class DistanceCalculator {
             Integer element = in.get(amount);
             int key = amount;
             if (Objects.isNull(element)) {
-                List<Integer> keys = new ArrayList<>(in.keySet());
-                Collections.sort(keys);
-                int temp;
-                for (Integer i : keys) {
+                for (Integer i : in.keySet()) {
                     if (i < amount) {
                         key = i;
                     }
