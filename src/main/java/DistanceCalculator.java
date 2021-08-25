@@ -2,113 +2,174 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DistanceCalculator {
+    private int stationsAmount;
+    private int amountForDelete;
+    private Map<Integer, List<Integer>> distances;
+    private Map<Integer, Integer> duplicates;
+    private Map<Integer, Integer> longestDuplicate;
+    private Map<Integer, Integer> leftDistance;
+    private Set<Integer> stationIndexes;
+    private String receipt;
 
-    public static void main(String[] args) {
-
+    private DistanceCalculator() {
     }
 
-    //считаем расстояния между станциями
-    Map<Integer, List<Integer>> calculateDistance(List<Integer> stations) {
-        Map<Integer, List<Integer>> rsl = new HashMap<>();
-        for (int i = 0; i < stations.size() - 1; i++) {
-            List<Integer> distances = rsl.get(i);
-            for (int j = i + 1; j < stations.size(); j++) {
-                if (distances == null) {
-                    distances = new ArrayList<>();
+    public int getStationsAmount() {
+        return stationsAmount;
+    }
+
+    public int getAmountForDelete() {
+        return amountForDelete;
+    }
+
+    public Map<Integer, List<Integer>> getDistances() {
+        return distances;
+    }
+
+    public Map<Integer, Integer> getDuplicates() {
+        return duplicates;
+    }
+
+    public Map<Integer, Integer> getLongestDuplicate() {
+        return longestDuplicate;
+    }
+
+    public Map<Integer, Integer> getLeftDistance() {
+        return leftDistance;
+    }
+
+    public Set<Integer> getStationIndexes() {
+        return stationIndexes;
+    }
+
+    public String getReceipt() {
+        return receipt;
+    }
+
+    public static ReceiptBuilder builder() {
+        return new DistanceCalculator().new ReceiptBuilder();
+    }
+
+    public class ReceiptBuilder {
+
+        private ReceiptBuilder() {
+        }
+
+        //считаем расстояния между станциями
+        public ReceiptBuilder calculateDistance(List<Integer> firstLine, List<Integer> stations) {
+            Map<Integer, List<Integer>> rsl = new HashMap<>();
+            for (int i = 0; i < stations.size() - 1; i++) {
+                List<Integer> distances = rsl.get(i);
+                for (int j = i + 1; j < stations.size(); j++) {
+                    if (distances == null) {
+                        distances = new ArrayList<>();
+                    }
+                    distances.add(Math.abs(stations.get(i) - stations.get(j)));
                 }
-                distances.add(Math.abs(stations.get(i) - stations.get(j)));
+                rsl.put(i, (distances));
             }
-            rsl.put(i, (distances));
+            rsl.put(stations.size() - 1, List.of(0));
+            DistanceCalculator.this.stationsAmount = firstLine.get(0);
+            DistanceCalculator.this.amountForDelete = firstLine.get(1);
+            DistanceCalculator.this.distances = rsl;
+            return this;
         }
-        rsl.put(stations.size() - 1, List.of(0));
-        return rsl;
 
-    }
-
-    //объединяем интервалы в серии
-    public Map<Integer, Integer> calculateDuplicates(Map<Integer, List<Integer>> in) {
-        Map<Integer, Integer> rsl = new HashMap<>();
-        for (int i = 0; i < in.size(); i++) {
-            List<Integer> inner = in.get(i);
-            for (int j = 0; j < inner.size(); j++) {
-                Integer amount = rsl.get(inner.get(j));
-                rsl.put(inner.get(j), (Objects.isNull(amount) ? 1 : amount + 1));
+        //объединяем интервалы в серии
+        public ReceiptBuilder calculateDuplicates() {
+            Map<Integer, List<Integer>> distances = DistanceCalculator.this.getDistances();
+            Map<Integer, Integer> rsl = new HashMap<>();
+            for (int i = 0; i < distances.size(); i++) {
+                List<Integer> inner = distances.get(i);
+                for (int j = 0; j < inner.size(); j++) {
+                    Integer amount = rsl.get(inner.get(j));
+                    rsl.put(inner.get(j), (Objects.isNull(amount) ? 1 : amount + 1));
+                }
             }
+            DistanceCalculator.this.duplicates = rsl;
+            return this;
         }
-        return rsl;
-    }
 
-    //оставляем серии с наибольшими отрезками
-    public Map<Integer, Integer> deleteSmallestDuplicate(Map<Integer, Integer> in) {
-        Map<Integer, Integer> rsl = new HashMap<>();
-        for (Map.Entry<Integer, Integer> entry : in.entrySet()) {
-            int amount = entry.getValue();
-            Integer station = rsl.get(amount);
-            rsl.put(amount, (Objects.isNull(station) ? entry.getKey() : Math.max(station, entry.getKey())));
+        //оставляем серии с наибольшими интервалами
+        public ReceiptBuilder deleteSmallestDuplicate() {
+            Map<Integer, Integer> in = DistanceCalculator.this.getDuplicates();
+            Map<Integer, Integer> rsl = new HashMap<>();
+            for (Map.Entry<Integer, Integer> entry : in.entrySet()) {
+                int amount = entry.getValue();
+                Integer station = rsl.get(amount);
+                rsl.put(amount, (Objects.isNull(station) ? entry.getKey()
+                        : Math.max(station, entry.getKey())));
+            }
+            DistanceCalculator.this.longestDuplicate = rsl;
+            return this;
         }
-        return rsl;
-    }
 
-    //оставляем серию с колличеством отрезков наиболее близким к колличеству,которое нужно оставить
-    public Map<Integer, Integer> deleteStations(int amount, Map<Integer, Integer> in) {
-        Map<Integer, Integer> rsl = new HashMap<>();
-        if (in.size() == 1) {
-            rsl.put(amount, in.values().stream().findFirst().get());
-        } else {
-            Integer element = in.get(amount);
-            int key = amount;
-            if (Objects.isNull(element)) {
-                for (Integer i : in.keySet()) {
-                    if (i < amount) {
-                        key = i;
+        //оставляем серию с количеством отрезков наиболее близким к количеству,
+        // которое нужно оставить
+        public ReceiptBuilder deleteStations() {
+            Map<Integer, Integer> intervals = DistanceCalculator.this.longestDuplicate;
+            int amount = DistanceCalculator.this.distances.size() - DistanceCalculator.this.amountForDelete;
+            Map<Integer, Integer> rsl = new HashMap<>();
+            if (intervals.size() == 1) {
+                rsl.put(amount, intervals.values().stream().findFirst().get());
+            } else {
+                Integer element = intervals.get(amount);
+                int key = amount;
+                if (Objects.isNull(element)) {
+                    for (Integer i : intervals.keySet()) {
+                        if (i < amount) {
+                            key = i;
+                        }
+                    }
+                }
+                rsl.put(key, intervals.get(key));
+            }
+            DistanceCalculator.this.leftDistance = rsl;
+            return this;
+        }
+
+        //сопоставляем расстояние со станциями, и в результат пишем те пары индексов,
+        // между которыми это расстояние
+        public ReceiptBuilder sortStations() {
+            Map<Integer, List<Integer>> allStations = DistanceCalculator.this.distances;
+            Set<Integer> rsl = new HashSet<>();
+            int distance = DistanceCalculator.this.leftDistance.values()
+                    .stream()
+                    .findFirst()
+                    .get();
+            for (int i = 0; i < allStations.size(); i++) {
+                List<Integer> inner = allStations.get(i);
+                for (int j = 0; j < inner.size(); j++) {
+                    if (inner.get(j) == distance) {
+                        rsl.add(i);
+                        rsl.add(i + j + 1);
                     }
                 }
             }
-            rsl.put(key, in.get(key));
+            DistanceCalculator.this.stationIndexes = rsl;
+            return this;
         }
-        return rsl;
-    }
 
-    //сопоставляем расстояние со станциями, и в результат пишем те пары индексов, между которыми это расстояние
-    public Set<Integer> sortStations(Map<Integer, List<Integer>> allStations, Map<Integer, Integer> distance) {
-        Set<Integer> rsl = new HashSet<>();
-        int pattern = distance.values()
-                .stream()
-                .findFirst()
-                .get();
-        for (int i = 0; i < allStations.size(); i++) {
-            List<Integer> inner = allStations.get(i);
-            for (int j = 0; j < inner.size(); j++) {
-                if (inner.get(j) == pattern) {
-                    rsl.add(i);
-                    rsl.add(i + j + 1);
+        public ReceiptBuilder receipt() {
+            List<Integer> stations = new ArrayList();
+            for (Map.Entry<Integer, List<Integer>> entry : distances.entrySet()) {
+                int stationNumber = entry.getKey();
+                if (!stationIndexes.contains(stationNumber)) {
+                    stations.add(stationNumber + 1);
                 }
             }
+            stations = stations.isEmpty() ? List.of(1) : stations;
+            DistanceCalculator.this.receipt = String.format("%s" + System.lineSeparator() + "%s",
+                    leftDistance.values().stream()
+                            .findFirst()
+                            .get(),
+                    stations
+            );
+            return this;
         }
-        return rsl;
-    }
 
-    public String receipt(List<Integer> firstLine, List<Integer> secondLine) {
-        int stationsAmount = firstLine.get(0);
-        int amountForDelete = firstLine.get(1);
-        Map<Integer, List<Integer>> distances = calculateDistance(secondLine);
-        Map<Integer, Integer> duplicates = calculateDuplicates(distances);
-        Map<Integer, Integer> longestDuplicate = deleteSmallestDuplicate(duplicates);
-        Map<Integer, Integer> leftDistance = deleteStations((distances.size() - amountForDelete), longestDuplicate);
-        Set<Integer> stationIndexes = sortStations(distances, leftDistance);
-        List<Integer> stations = new ArrayList();
-        for (Map.Entry<Integer, List<Integer>> entry : distances.entrySet()) {
-            int stationNumber = entry.getKey();
-            if (!stationIndexes.contains(stationNumber)) {
-                stations.add(stationNumber + 1);
-            }
+        public DistanceCalculator build() {
+            return DistanceCalculator.this;
         }
-        stations = stations.isEmpty() ? List.of(1) : stations;
-        return String.format("%s" + System.lineSeparator() + "%s",
-                leftDistance.values().stream()
-                        .findFirst()
-                        .get(),
-                stations
-        );
     }
 }
