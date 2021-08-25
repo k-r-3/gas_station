@@ -11,7 +11,6 @@ public class DistanceCalculatorTest {
         DistanceCalculator calculator = DistanceCalculator.builder()
                 .calculateDistance(List.of(5, 3), Arrays.asList(2, 10, 45, 33, 56))
                 .build();
-        System.out.println(calculator.getDistances().toString());
         assertEquals(calculator.getDistances().toString(),
                 "{0=[8, 43, 31, 54], 1=[35, 23, 46], 2=[12, 11], 3=[23], 4=[0]}");
     }
@@ -53,7 +52,6 @@ public class DistanceCalculatorTest {
                 .deleteStations()
                 .build();
         Map<Integer, Integer> rslFor3 = calculator1.getLeftDistance();
-        System.out.println(rslFor3);
         Map<Integer, Integer> rslFor4 = calculator2.getLeftDistance();
         assertThat(rslFor3, is(Map.of(3, 23)));
         assertThat(rslFor4, is(Map.of(3, 23)));
@@ -85,7 +83,6 @@ public class DistanceCalculatorTest {
         String rsl = calculator.getReceipt();
         String expected = "90" + System.lineSeparator() + "[1, 4, 5]";
         assertEquals(expected, rsl);
-        System.out.println(rsl);
     }
 
     @Test
@@ -101,7 +98,6 @@ public class DistanceCalculatorTest {
         String rsl = calculator.getReceipt();
         String expected = "54" + System.lineSeparator() + "[2, 4, 6]";
         assertEquals(expected, rsl);
-        System.out.println(rsl);
     }
 
     @Test
@@ -117,7 +113,6 @@ public class DistanceCalculatorTest {
         String rsl = calculator.getReceipt();
         String expected = "74" + System.lineSeparator() + "[1, 4]";
         assertEquals(expected, rsl);
-        System.out.println(rsl);
     }
 
     @Test
@@ -133,7 +128,6 @@ public class DistanceCalculatorTest {
         String rsl = calculator.getReceipt();
         String expected = "20" + System.lineSeparator() + "[3]";
         assertEquals(expected, rsl);
-        System.out.println(rsl);
     }
 
     @Test
@@ -149,6 +143,5 @@ public class DistanceCalculatorTest {
         String rsl = calculator.getReceipt();
         String expected = "0" + System.lineSeparator() + "[1]";
         assertEquals(expected, rsl);
-        System.out.println(rsl);
     }
 }
